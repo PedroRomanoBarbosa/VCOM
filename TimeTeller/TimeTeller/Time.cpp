@@ -1,5 +1,7 @@
 #include "Time.h"
 #include <cmath>
+#include <iomanip>
+#include <sstream>
 
 Time::Time()
 {
@@ -44,7 +46,12 @@ void Time::setTime(float angle_h, float angle_m, float angle_s)
 
 std::string Time::sayTime()
 {
-	return std::to_string(hour) + ":" + std::to_string(minute) + ":" + std::to_string(second);
+
+	std::stringstream res;
+	res << std::setfill('0') << std::setw(2) << std::to_string(hour) << ":";
+	res << std::setfill('0') << std::setw(2) << std::to_string(minute) << ":";
+	res	<< std::setfill('0') << std::setw(2) << std::to_string(second);
+	return res.str();
 }
 
 
