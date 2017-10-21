@@ -337,3 +337,13 @@ __pycache__/
 
 # OpenCover UI analysis results
 OpenCover/
+
+TimeTeller/TimeTeller/TimeTeller\.vcxproj
+
+TimeTeller/TimeTeller\.sln
+
+TimeTeller/TimeTeller/OpenCV_Debug_64x\.props
+
+TimeTeller/TimeTeller/OpenCV_Release_64x\.props
+
+TimeTeller/TimeTeller/TimeTeller\.vcxproj\.filters
