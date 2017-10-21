@@ -13,7 +13,11 @@ Time::~Time()
 
 double Time::reduceAngle(float angle)
 {
-	return fmod(abs(angle), revolution);
+	double a = fmod(angle, revolution);
+	while (a < 0) {
+		a += 360.0;
+	}
+	return a;
 }
 
 int Time::resolveAngle(float angle, int timeSteps)
