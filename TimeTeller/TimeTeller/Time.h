@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 class Time
 {
 private: 
@@ -12,6 +13,7 @@ public:
 	~Time();
 	void setTime(float angle_h, float angle_m);
 	void setTime(float angle_h, float angle_m, float angle_s);
+	std::string sayTime();
 
 	int getHour();
 	int getMinute();

@@ -42,6 +42,11 @@ void Time::setTime(float angle_h, float angle_m, float angle_s)
 	return;
 }
 
+std::string Time::sayTime()
+{
+	return std::to_string(hour) + ":" + std::to_string(minute) + ":" + std::to_string(second);
+}
+
 
 
 int Time::getHour()
