@@ -13,11 +13,10 @@ int main(int argc, const char** argv)
 	if (argc == 2) {
 		img = getImage(argv[1]);
 	} else {
-		cout << "No arguments";
-		return 1;
+		input_choice(img);
 	}
 
-	cout << "Image Loaded.";
+	cout << "Image Loaded.\n";
 	imshow("Original Image", img);
 
 	waitKey(0);

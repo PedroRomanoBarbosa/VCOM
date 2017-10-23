@@ -6,6 +6,7 @@
 using namespace std;
 using namespace cv;
 
+const static string DEFAULT_PATH = "data/images/basic_square.jpg";
 
 /**
 Check if a file exists before opening
@@ -21,7 +22,19 @@ Attempts to open an image fie and read its contents
 */
 Mat getImage(string filepath);
 
+/**
+Attempts to open an image on the default location. "data/images/basic_square.jpg"
 
-int input_choice();
+@return The Mat data of the image.
+*/
+Mat getImage();
+
+
+/**
+Provides the user with a choice of how to retreve an image.
+
+@param img The Mat space where the image will be stored
+*/
+void input_choice(Mat &img);
+
 Mat getCapture();
-Mat getImage(int choice);
