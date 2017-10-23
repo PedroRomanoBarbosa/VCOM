@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include "opencv2/imgproc.hpp"
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <sys/stat.h>
@@ -29,6 +30,12 @@ Attempts to open an image on the default location. "data/images/basic_square.jpg
 */
 Mat getImage();
 
+/**
+Atempts to use the camera to get a picture taken.
+
+@param img The Mat space where the image will be stored
+*/
+void getCapture(Mat &img);
 
 /**
 Provides the user with a choice of how to retreve an image.
@@ -36,5 +43,3 @@ Provides the user with a choice of how to retreve an image.
 @param img The Mat space where the image will be stored
 */
 void input_choice(Mat &img);
-
-Mat getCapture();

@@ -46,8 +46,7 @@ void input_choice(Mat &img) {
 		img = getImage(choice);
 	}
 	else if (choice == "n" || choice == "no") {
-		cout << "Camera\n";
-		exit(1);
+		getCapture(img);
 	}
 	else {
 		cout << "aborting...\n";
@@ -55,3 +54,40 @@ void input_choice(Mat &img) {
 	}
 	return;
 } 
+
+void getCapture(Mat &img) {
+	cout << "\nThe system's camera will now be used to take a snapshot.\n"
+		<< "Position the clock in front of the camera and then\n"
+		<< "with the window focused, press any key to take the snapshot\n";
+
+	VideoCapture capture;
+	Mat frame, edges;
+	namedWindow("camera", 1);
+	bool record_flag = true;
+	
+
+	if (!capture.open(0)) {
+		cout << "Capture from camera didn't work" << endl;
+		exit(1);
+	}
+
+	if (capture.isOpened()) {
+		while (record_flag) {
+			capture >> frame; // get a new frame from camera
+			cvtColor(frame, edges, COLOR_BGR2GRAY);
+			GaussianBlur(edges, edges, Size(7, 7), 1.5, 1.5);
+			Canny(edges, edges, 0, 30, 3);
+			imshow("camera", edges);
+			if (waitKey(30) >= 0)
+				record_flag = false;
+		}
+		destroyWindow("camera");
+		img = edges;
+	}
+	else {
+		cerr << "Something as gone wrong while attempting to record\n";
+		exit(1);
+	}
+		
+	return;
+}
