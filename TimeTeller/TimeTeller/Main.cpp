@@ -11,9 +11,9 @@ int main(int argc, const char** argv)
 	Mat img;
 
 	if (argc == 2) {
-		img = getImage(argv[1]);
+		img = ImageRetrieve::getImage(argv[1]);
 	} else {
-		input_choice(img);
+		ImageRetrieve::input_choice(img);
 	}
 
 	cout << "Image Loaded.\n";

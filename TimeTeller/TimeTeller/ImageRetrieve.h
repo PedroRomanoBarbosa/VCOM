@@ -7,39 +7,43 @@
 using namespace std;
 using namespace cv;
 
-const static string DEFAULT_PATH = "data/images/basic_square.jpg";
+namespace ImageRetrieve {
 
-/**
-Check if a file exists before opening
-Adapted from https://stackoverflow.com/questions/4316442/stdofstream-check-if-file-exists-before-writing
-*/
-bool check_file(string filename);
+	const static string DEFAULT_PATH = "data/images/basic_square.jpg";
 
-/**
-Attempts to open an image fie and read its contents
+	/**
+	Check if a file exists before opening
+	Adapted from https://stackoverflow.com/questions/4316442/stdofstream-check-if-file-exists-before-writing
+	*/
+	bool check_file(string filename);
 
-@param filepath The location of the image
-@return The Mat data of the image.
-*/
-Mat getImage(string filepath);
+	/**
+	Attempts to open an image fie and read its contents
 
-/**
-Attempts to open an image on the default location. "data/images/basic_square.jpg"
+	@param filepath The location of the image
+	@return The Mat data of the image.
+	*/
+	Mat getImage(string filepath);
 
-@return The Mat data of the image.
-*/
-Mat getImage();
+	/**
+	Attempts to open an image on the default location. "data/images/basic_square.jpg"
 
-/**
-Atempts to use the camera to get a picture taken.
+	@return The Mat data of the image.
+	*/
+	Mat getImage();
 
-@param img The Mat space where the image will be stored
-*/
-void getCapture(Mat &img);
+	/**
+	Atempts to use the camera to get a picture taken.
 
-/**
-Provides the user with a choice of how to retreve an image.
+	@param img The Mat space where the image will be stored
+	*/
+	void getCapture(Mat &img);
 
-@param img The Mat space where the image will be stored
-*/
-void input_choice(Mat &img);
+	/**
+	Provides the user with a choice of how to retreve an image.
+
+	@param img The Mat space where the image will be stored
+	*/
+	void input_choice(Mat &img);
+}
+
