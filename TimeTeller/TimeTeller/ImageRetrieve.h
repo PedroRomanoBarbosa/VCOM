@@ -10,6 +10,7 @@ using namespace cv;
 namespace ImageRetrieve {
 
 	const static string DEFAULT_PATH = "data/images/basic_square.jpg";
+	const static string DEFAULT_CAPTURE_PATH = "data/capture/";
 
 	/**
 	Check if a file exists before opening

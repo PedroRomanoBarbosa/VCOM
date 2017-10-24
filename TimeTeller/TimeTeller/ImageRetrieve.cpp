@@ -80,6 +80,19 @@ namespace ImageRetrieve {
 				if (waitKey(30) >= 0)
 					record_flag = false;
 			}
+			
+			for (int i = 1; i < 500; i++) {
+				string path = DEFAULT_CAPTURE_PATH + "Capture" + to_string(i) + ".bmp";
+				if (!check_file(path)) {
+					if (imwrite(path, frame))
+						cout << "Image capture saved to: " << path << endl;
+					else
+						cerr << "Error saving image - check if the folder "<< DEFAULT_CAPTURE_PATH << " exists\n";
+					i = 500;
+				}
+			}
+			
+
 			destroyWindow("camera");
 			img = frame;
 		}
