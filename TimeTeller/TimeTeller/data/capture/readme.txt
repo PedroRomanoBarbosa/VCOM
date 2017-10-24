@@ -1,0 +1,1 @@
+Images captured by the camera wil lbe stored here.
