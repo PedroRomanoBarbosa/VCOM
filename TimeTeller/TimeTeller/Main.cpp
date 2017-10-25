@@ -24,7 +24,7 @@ int main(int argc, const char** argv)
 	cout << "Detecting Circles...\n";
 	CircleDetector::findAndShowCircles(img);
 
-
+	cout << "done\n";
 
 	waitKey(0);
 	return 0;
