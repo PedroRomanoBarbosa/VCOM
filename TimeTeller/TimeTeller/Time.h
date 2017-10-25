@@ -1,5 +1,8 @@
 #pragma once
 #include <string>
+#include <cmath>
+#include <iomanip>
+#include <sstream>
 class Time
 {
 private: 

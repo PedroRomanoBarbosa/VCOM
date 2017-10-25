@@ -1,7 +1,4 @@
 #include "Time.h"
-#include <cmath>
-#include <iomanip>
-#include <sstream>
 
 Time::Time()
 {
