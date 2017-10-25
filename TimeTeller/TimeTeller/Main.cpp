@@ -24,7 +24,19 @@ int main(int argc, const char** argv)
 	cout << "Detecting Circles...\n";
 	CircleDetector::findAndShowCircles(img);
 
-	cout << "done\n";
+	//TODO: Detectar os ponteiros na imagem. Recomendo o Line Hough transform
+
+	//TODO: Usando as linhas dos ponteiros, descobrir os angulos
+	/*
+		float angulo_h = ????(img); 
+		float angulo_m = ????(img);
+	*/
+
+	//TODO: Passar esses angulos à função sayTime
+	/*
+		Time t = Time(angulo_h, angulo_m);
+		cout << "A hora indicada é " << t.sayTime() << endl;
+	*/
 
 	waitKey(0);
 	return 0;
