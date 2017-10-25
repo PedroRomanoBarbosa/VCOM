@@ -20,17 +20,22 @@ void CircleDetector::findAndShowCircles(Mat &img) {
 	img.copyTo(copy);
 
 	cvtColor(copy, gray, CV_BGR2GRAY);
-	GaussianBlur(gray, gray, Size(9, 9), 2, 2);
+	GaussianBlur(gray, gray, Size(0, 0), 2, 2);
 
-	namedWindow("Obtained Circles", CV_WINDOW_AUTOSIZE);
-	int threshold_lower = 50; bool change = true;
-	createTrackbar("Threshold", "Obtained Circles", &threshold_lower, 100, CallbackForSlider, &change);
+	namedWindow("Obtained Circles", CV_WINDOW_NORMAL);
+	int threshold_lower = 50, threshold_upper = 100; bool change = true;
 
 	//Results Vector
 	vector<Vec3f> circles;
 
 	for (;;) {
 		if (change) {
+			if (threshold_upper < threshold_lower)
+				threshold_lower = threshold_upper;
+
+			createTrackbar("Upper Bound", "Obtained Circles", &threshold_upper, 255, CallbackForSlider, &change);
+			createTrackbar("Lower Bound", "Obtained Circles", &threshold_lower, threshold_upper, CallbackForSlider, &change);
+
 			img.copyTo(copy);
 			/// Apply the Hough Transform to find the circles
 			HoughCircles(
@@ -38,11 +43,11 @@ void CircleDetector::findAndShowCircles(Mat &img) {
 				circles, //output array
 				CV_HOUGH_GRADIENT, //see see cv::HoughModes. (the only implemented method is HOUGH_GRADIENT)
 				1, //dp, resolution, leave as 1
-				gray.rows / 16,  // change this value to detect circles with different distances to each other
-				100, threshold_lower, //higher and lower threshold passed to the internal canny detector (The smaller the second is the more false circles may be detected.)
+				gray.rows / 8,  // change this value to detect circles with different distances to each other
+				threshold_upper, threshold_lower, //higher and lower threshold passed to the internal canny detector (The smaller the second is the more false circles may be detected.)
 				0, 0); //change the last two parameters (min_radius & max_radius) to detect larger circles
 
-					   /// Draw the circles detected
+			/// Draw the circles detected
 			for (size_t i = 0; i < circles.size(); i++)
 			{
 				Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
