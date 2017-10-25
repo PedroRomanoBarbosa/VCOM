@@ -3,6 +3,7 @@
 #include <opencv2/highgui.hpp>
 #include "ImageRetrieve.h"
 #include "Time.h"
+#include "CircleDetector.h"
 using namespace std;
 using namespace cv;
 
@@ -17,7 +18,13 @@ int main(int argc, const char** argv)
 	}
 
 	cout << "Image Loaded.\n";
+	namedWindow("Original Image", 1);
 	imshow("Original Image", img);
+
+	cout << "Detecting Circles...\n";
+	CircleDetector::findAndShowCircles(img);
+
+
 
 	waitKey(0);
 	return 0;
