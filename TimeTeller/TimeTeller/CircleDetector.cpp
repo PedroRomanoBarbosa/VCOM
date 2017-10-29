@@ -69,6 +69,27 @@ void CircleDetector::findAndShowCircles(Mat &img) {
 	destroyWindow("Obtained Circles");
 
 	//TODO: Utilizando o primero circulo em vector<Vec3f> circles, fazer crop à imagem que estiver no copy, guardar em img, e mostrar aqui 
+
+	int startX = (circles[0][0] - circles[0][2]), startY = (circles[0][1] - circles[0][2]), totalsize = (2 * circles[0][2]);
+
+	Mat ROI(img, Rect(startX, startY, totalsize, totalsize));
+
+	Mat croppedImage;
+
+	// Copy the data into new matrix
+	ROI.copyTo(croppedImage);
+
+	vector<Vec4i> lines;
+	HoughLinesP(croppedImage, lines, 1, (CV_PI / 180), 80, 30, 10);
+
+	for (int i = 0; i < lines.size(); i++)
+	{
+		line(croppedImage, Point(lines[i][0], lines[i][1]),
+			Point(lines[i][2], lines[i][3]), Scalar(0, 0, 255), 3, 8);
+	}
+
+	imwrite("newImage.png", croppedImage);
+
 	namedWindow("Hough Circle Result", CV_WINDOW_AUTOSIZE);
 	imshow("Hough Circle Result", copy); //Deve mostrar img depois de cropped, não copy.
 	
