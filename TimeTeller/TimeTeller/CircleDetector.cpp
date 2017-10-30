@@ -79,19 +79,45 @@ void CircleDetector::findAndShowCircles(Mat &img) {
 	// Copy the data into new matrix
 	ROI.copyTo(croppedImage);
 
-	vector<Vec4i> lines;
-	HoughLinesP(croppedImage, lines, 1, (CV_PI / 180), 80, 30, 10);
+	Mat croppedGrayscale;
+	cvtColor(croppedImage, croppedGrayscale, CV_BGR2GRAY);
 
+	// Canny edge detection
+	Mat croppedEdges;
+	Canny(croppedGrayscale, croppedEdges, 200, 250, 3);
+
+	vector<Vec4i> lines;
+	HoughLinesP(croppedEdges, lines, 1, (CV_PI / 180), 10, 30, 10);
+
+	//eliminates unnecessary lines
+	int clockCenter_y = croppedImage.size().height /2;
+	int clockCenter_x = croppedImage.size().width /2;
+
+	for (int i = lines.size() - 1; i >= 0; i--) {
+		//sees if the line have at least 1 of the points in the center of the image
+		if (((lines[i][0] >= (clockCenter_x*0.85)) && (lines[i][0] <= (clockCenter_x*1.15)) &&	//x1
+			(lines[i][1] >= (clockCenter_y*0.85)) && (lines[i][1] <= (clockCenter_y*1.15))) ||	//y1
+			((lines[i][2] >= (clockCenter_x*0.85)) && (lines[i][2] <= (clockCenter_x*1.15)) &&	//x2
+			(lines[i][3] >= (clockCenter_y*0.85)) && (lines[i][3] <= (clockCenter_y*1.15)))) {	//y2
+				//keep line
+				continue;
+			}
+		else {
+			lines.erase(lines.begin() + i);
+		}
+	}
+	//draw all lines
 	for (int i = 0; i < lines.size(); i++)
 	{
 		line(croppedImage, Point(lines[i][0], lines[i][1]),
 			Point(lines[i][2], lines[i][3]), Scalar(0, 0, 255), 3, 8);
 	}
 
-	imwrite("newImage.png", croppedImage);
-
 	namedWindow("Hough Circle Result", CV_WINDOW_AUTOSIZE);
 	imshow("Hough Circle Result", copy); //Deve mostrar img depois de cropped, não copy.
+
+	namedWindow("Cropped+lines", 1);
+	imshow("Cropped+lines", croppedImage);
 	
 	return;
 }
