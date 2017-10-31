@@ -14,6 +14,18 @@ void CallbackForSlider(int threshold, void *userData)
 	return;
 }
 
+float ReturnAngle(Vec4i line1, Vec4i line2) {
+	//line format is (x1,y1,x2,y2)
+	float angle1 = atan2(line1[1] - line1[3], line1[0] - line1[2]);
+	float angle2 = atan2(line2[1] - line2[3], line2[0] - line2[2]);
+	float result = (angle2 - angle1) * 180 / 3.14;
+
+	if (result<0)
+		result += 360;
+
+	return result;
+}
+
 
 void CircleDetector::findAndShowCircles(Mat &img) {
 	Mat copy, gray;
@@ -113,7 +125,7 @@ void CircleDetector::findAndShowCircles(Mat &img) {
 				max_gap); // maximum allowed gap between points on the same line to link them.
 
 
-			//eliminates unnecessary lines
+			//eliminates lines not in the center
 			for (int i = lines.size() - 1; i >= 0; i--) {
 				//sees if the line have at least 1 of the points in the center of the image
 				if (((lines[i][0] >= (clockCenter_x*0.85)) && (lines[i][0] <= (clockCenter_x*1.15)) &&	//x1
@@ -125,6 +137,18 @@ void CircleDetector::findAndShowCircles(Mat &img) {
 				}
 				else {
 					lines.erase(lines.begin() + i);
+				}
+			}
+
+			float angle;
+			//eliminates lines duplicates
+			for (int i = lines.size() - 1; i >= 0; i--) {
+				for (int j = 0; j < i; j++) {
+					angle = ReturnAngle(lines[i], lines[j]);
+					if (angle < 5 || angle > 355) {
+						lines.erase(lines.begin() + i);
+						break;
+					}
 				}
 			}
 			
