@@ -5,6 +5,7 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include <opencv/cv.h>
 #include <math.h>
+#include <algorithm> 
 using namespace std;
 using namespace cv;
 

@@ -7,6 +7,14 @@ CircleDetector::~CircleDetector()
 {
 }
 
+struct linelength {
+	bool operator() (Vec4i line1, Vec4i line2) { 
+		float length1 =	norm(Point(line1[0], line1[2]) - Point(line1[1], line1[3]));
+		float length2 = norm(Point(line2[0], line2[2]) - Point(line2[1], line2[3]));
+		return (length1 < length2);
+	}
+} mylinelength;
+
 void CallbackForSlider(int threshold, void *userData)
 {
 	bool &flag = *(static_cast<bool*>(userData));
@@ -151,12 +159,33 @@ void CircleDetector::findAndShowCircles(Mat &img) {
 					}
 				}
 			}
+
+			//sort lines by lines length
+			std::sort(lines.begin(), lines.end(), mylinelength);
 			
 			///draw all lines
-			for (int i = 0; i < lines.size(); i++) {
-				line(copy1, Point(lines[i][0], lines[i][1]),
-					Point(lines[i][2], lines[i][3]), Scalar(0, 0, 255), 3, 8);
+
+			if (lines.size() == 2) {
+				line(copy1, Point(lines[0][0], lines[0][1]),
+					Point(lines[0][2], lines[0][3]), Scalar(0, 0, 255), 3, 8);
+				line(copy1, Point(lines[1][0], lines[1][1]),
+					Point(lines[1][2], lines[1][3]), Scalar(0, 255, 0), 3, 8);
 			}
+			else if (lines.size() == 3) {
+				line(copy1, Point(lines[0][0], lines[0][1]),
+					Point(lines[0][2], lines[0][3]), Scalar(0, 0, 255), 3, 8);
+				line(copy1, Point(lines[1][0], lines[1][1]),
+					Point(lines[1][2], lines[1][3]), Scalar(0, 255, 0), 3, 8);
+				line(copy1, Point(lines[2][0], lines[2][1]),
+					Point(lines[2][2], lines[2][3]), Scalar(255, 0, 0), 3, 8);
+			}
+			else {
+				for (int i = 0; i < lines.size(); i++) {
+					line(copy1, Point(lines[i][0], lines[i][1]),
+					Point(lines[i][2], lines[i][3]), Scalar(0, 0, 255), 3, 8);
+				}
+			}
+
 			change = false;
 		}
 
