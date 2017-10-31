@@ -48,8 +48,7 @@ void CircleDetector::findAndShowCircles(Mat &img) {
 				0, 0); //change the last two parameters (min_radius & max_radius) to detect larger circles
 
 			/// Draw the circles detected
-			for (size_t i = 0; i < circles.size(); i++)
-			{
+			for (size_t i = 0; i < circles.size(); i++) {
 				Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
 				int radius = cvRound(circles[i][2]);
 				// circle center
@@ -86,38 +85,72 @@ void CircleDetector::findAndShowCircles(Mat &img) {
 	Mat croppedEdges;
 	Canny(croppedGrayscale, croppedEdges, 200, 250, 3);
 
+	Mat copy1;
 	vector<Vec4i> lines;
-	HoughLinesP(croppedEdges, lines, 1, (CV_PI / 180), 10, 30, 10);
+	int line_threshold = 50, max_gap = 10;
+	int clockCenter_y = croppedImage.size().height / 2;
+	int clockCenter_x = croppedImage.size().width / 2;
+	bool change1 = true;
 
-	//eliminates unnecessary lines
-	int clockCenter_y = croppedImage.size().height /2;
-	int clockCenter_x = croppedImage.size().width /2;
+	namedWindow("Obtained Lines", CV_WINDOW_NORMAL);
+	int desiredWidth = 640, desiredheight = 480;
+	resizeWindow("Obtained Lines", desiredWidth, desiredheight);
+	for (;;) {
+		if (change1) {
+			createTrackbar("Threshhold", "Obtained Lines", &line_threshold, 80, CallbackForSlider, &change1);
+			createTrackbar("Maximum Gap", "Obtained Lines", &max_gap, 15, CallbackForSlider, &change1);
 
-	for (int i = lines.size() - 1; i >= 0; i--) {
-		//sees if the line have at least 1 of the points in the center of the image
-		if (((lines[i][0] >= (clockCenter_x*0.85)) && (lines[i][0] <= (clockCenter_x*1.15)) &&	//x1
-			(lines[i][1] >= (clockCenter_y*0.85)) && (lines[i][1] <= (clockCenter_y*1.15))) ||	//y1
-			((lines[i][2] >= (clockCenter_x*0.85)) && (lines[i][2] <= (clockCenter_x*1.15)) &&	//x2
-			(lines[i][3] >= (clockCenter_y*0.85)) && (lines[i][3] <= (clockCenter_y*1.15)))) {	//y2
-				//keep line
-				continue;
+			croppedImage.copyTo(copy1);
+
+			/// Apply the Hough Transform to find the lines
+			HoughLinesP(
+				croppedEdges, //input Mat
+				lines, //output array with format (x1,y1,x2,y2)
+				1, //leave as 1
+				(CV_PI / 180), //leave as it is 
+				line_threshold, // accumulator threshold parameter. Only those lines are returned that get enough votes ( >\texttt{threshold} ).
+				30, // minimum line length. Line segments shorter than that are rejected.
+				max_gap); // maximum allowed gap between points on the same line to link them.
+
+
+			//eliminates unnecessary lines
+			for (int i = lines.size() - 1; i >= 0; i--) {
+				//sees if the line have at least 1 of the points in the center of the image
+				if (((lines[i][0] >= (clockCenter_x*0.85)) && (lines[i][0] <= (clockCenter_x*1.15)) &&	//x1
+					(lines[i][1] >= (clockCenter_y*0.85)) && (lines[i][1] <= (clockCenter_y*1.15))) ||	//y1
+					((lines[i][2] >= (clockCenter_x*0.85)) && (lines[i][2] <= (clockCenter_x*1.15)) &&	//x2
+					(lines[i][3] >= (clockCenter_y*0.85)) && (lines[i][3] <= (clockCenter_y*1.15)))) {	//y2
+																										//keep line
+					continue;
+				}
+				else {
+					lines.erase(lines.begin() + i);
+				}
 			}
-		else {
-			lines.erase(lines.begin() + i);
+			
+			///draw all lines
+			for (int i = 0; i < lines.size(); i++) {
+				line(copy1, Point(lines[i][0], lines[i][1]),
+					Point(lines[i][2], lines[i][3]), Scalar(0, 0, 255), 3, 8);
+			}
+			change = false;
 		}
-	}
-	//draw all lines
-	for (int i = 0; i < lines.size(); i++)
-	{
-		line(croppedImage, Point(lines[i][0], lines[i][1]),
-			Point(lines[i][2], lines[i][3]), Scalar(0, 0, 255), 3, 8);
-	}
 
-	namedWindow("Hough Circle Result", CV_WINDOW_AUTOSIZE);
+		/// Show your results
+		imshow("Obtained Lines", copy1);
+
+		if (cvWaitKey(10) == VK_SPACE)
+			break;
+	}
+	destroyWindow("Obtained Lines");
+
+
+
+	/*namedWindow("Hough Circle Result", CV_WINDOW_AUTOSIZE);
 	imshow("Hough Circle Result", copy); //Deve mostrar img depois de cropped, não copy.
 
 	namedWindow("Cropped+lines", 1);
-	imshow("Cropped+lines", croppedImage);
+	imshow("Cropped+lines", croppedImage);*/
 	
 	return;
 }
