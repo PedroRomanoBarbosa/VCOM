@@ -7,10 +7,11 @@ CircleDetector::~CircleDetector()
 {
 }
 
+//Used to compare lines length
 struct linelength {
 	bool operator() (Vec4i line1, Vec4i line2) { 
-		float length1 =	norm(Point(line1[0], line1[2]) - Point(line1[1], line1[3]));
-		float length2 = norm(Point(line2[0], line2[2]) - Point(line2[1], line2[3]));
+		float length1 = sqrt((line1[2] - line1[0])*(line1[2] - line1[0]) + (line1[3] - line1[1])*(line1[3] - line1[1]));
+		float length2 = sqrt((line2[2] - line2[0])*(line2[2] - line2[0]) + (line2[3] - line2[1])*(line2[3] - line2[1]));
 		return (length1 < length2);
 	}
 } mylinelength;
@@ -22,11 +23,29 @@ void CallbackForSlider(int threshold, void *userData)
 	return;
 }
 
+double distancePoint(Point p1, Point p2) {
+
+	double x1 = p1.x;
+	double y1 = p1.y;
+	double x2 = p2.x;
+	double y2 = p2.y;
+
+	double x = x1 - x2;
+	double y = y1 - y2;
+
+	// Calculating Euclidean distance
+	double dist;
+	dist = pow(x, 2) + pow(y, 2);
+	dist = sqrt(dist);
+
+	return dist;
+}
+
 float ReturnAngle(Vec4i line1, Vec4i line2) {
 	//line format is (x1,y1,x2,y2)
-	float angle1 = atan2(line1[1] - line1[3], line1[0] - line1[2]);
-	float angle2 = atan2(line2[1] - line2[3], line2[0] - line2[2]);
-	float result = (angle2 - angle1) * 180 / 3.14;
+	float angle1 = atan2(line1[3] - line1[1], line1[2] - line1[0]);
+	float angle2 = atan2(line2[3] - line2[1], line2[2] - line2[0]);
+	float result = (angle2 - angle1) * 180 / CV_PI;
 
 	if (result<0)
 		result += 360;
@@ -114,7 +133,11 @@ void CircleDetector::findAndShowCircles(Mat &img) {
 
 	namedWindow("Obtained Lines", CV_WINDOW_NORMAL);
 	int desiredWidth = 640, desiredheight = 480;
+	float angle;
 	resizeWindow("Obtained Lines", desiredWidth, desiredheight);
+
+	cout << "Change threshold values until hours' line is red, minutes green and seconds blue" << endl;
+
 	for (;;) {
 		if (change1) {
 			createTrackbar("Threshhold", "Obtained Lines", &line_threshold, 80, CallbackForSlider, &change1);
@@ -148,7 +171,6 @@ void CircleDetector::findAndShowCircles(Mat &img) {
 				}
 			}
 
-			float angle;
 			//eliminates lines duplicates
 			for (int i = lines.size() - 1; i >= 0; i--) {
 				for (int j = 0; j < i; j++) {
@@ -192,18 +214,71 @@ void CircleDetector::findAndShowCircles(Mat &img) {
 		/// Show your results
 		imshow("Obtained Lines", copy1);
 
-		if (cvWaitKey(10) == VK_SPACE)
-			break;
+		if (cvWaitKey(10) == VK_SPACE) {
+			if (lines.size() == 2 || lines.size() == 3)
+				break;
+			else
+				cout << "Number of lines found invalid, please try to change the threshold" << endl;
+		}
+			
 	}
 	destroyWindow("Obtained Lines");
 
 
+	vector<float> angles;
+	// Finds the angles of the lines with vertical
+	for (size_t i = 0; i < lines.size(); i++) {
+		Vec4i l = lines[i];
+		Point pt1 = Point(l[0], l[1]);
+		Point pt2 = Point(l[2], l[3]);
 
-	/*namedWindow("Hough Circle Result", CV_WINDOW_AUTOSIZE);
-	imshow("Hough Circle Result", copy); //Deve mostrar img depois de cropped, não copy.
+		Point distantPoint;
+		if (distancePoint(Point(clockCenter_x, clockCenter_y),pt1) > distancePoint(Point(clockCenter_x, clockCenter_y), pt2))
+			distantPoint = Point(pt1.x - clockCenter_x, pt1.y - clockCenter_y);
+		else
+			distantPoint = Point(pt2.x - clockCenter_x, pt2.y - clockCenter_y);
 
-	namedWindow("Cropped+lines", 1);
-	imshow("Cropped+lines", croppedImage);*/
+		double radAngle = atan2(distantPoint.y, distantPoint.x) + atan2(1, 0);
+		double degreeAngle = (radAngle * 360) / (2 * CV_PI);
+		if (degreeAngle < 0)
+			degreeAngle += 360;
+
+		angles.push_back(degreeAngle);
+	}
+
+
+
+	///Calculate time
+	int horas, minutos, segundos;
+	if (lines.size() == 2) {
+		//horas
+		horas = angles[0] / (360 / 12);
+		//minutos
+		minutos = angles[1] / (360 / 60);
+
+		cout << "hours in red and minutes in green." << endl;
+		cout << "time: " << horas << "h " << minutos << "m " << endl << endl;
+
+	}
+	else if (lines.size() == 3) {
+
+		//horas
+		horas = angles[0] / (360 / 12);
+		//minutos
+		minutos = angles[1] / (360 / 60);
+		//segundos
+		segundos = angles[2] / (360 / 60);
+
+		cout << "hours in red, minutes in green and seconds in blue." << endl;
+		cout << "time: " << horas << "h " << minutos << "m " << segundos << "s " << endl << endl;
+
+	}
+
+
+
+
+	namedWindow("Hough Circle Result", CV_WINDOW_AUTOSIZE);
+	imshow("Hough Circle Result", copy1); //Deve mostrar img depois de cropped, não copy.
 	
 	return;
 }
