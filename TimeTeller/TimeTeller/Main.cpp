@@ -3,13 +3,14 @@
 #include <opencv2/highgui.hpp>
 #include "ImageRetrieve.h"
 #include "Time.h"
-#include "CircleDetector.h"
+#include "CircleFinder.h"
+#include "LineFinder.h"
 using namespace std;
 using namespace cv;
 
 int main(int argc, const char** argv)
 {
-	Mat img;
+	Mat img, crop, point;
 
 	if (argc == 2) {
 		img = ImageRetrieve::getImage(argv[1]);
@@ -22,7 +23,15 @@ int main(int argc, const char** argv)
 	imshow("Original Image", img);
 
 	cout << "Detecting Circles...\n";
-	CircleDetector::findAndShowCircles(img);
+	CircleFinder::findAndShowCircles(img, crop);
+
+	namedWindow("Cropped Image", 1);
+	imshow("Cropped Image", crop);
+
+
+	LineFinder::organizeMe(crop, point);
+
+
 
 	//TODO: Detectar os ponteiros na imagem. Recomendo o Line Hough transform
 

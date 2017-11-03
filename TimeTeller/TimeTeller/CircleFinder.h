@@ -15,11 +15,10 @@ using namespace cv;
 
 void CallbackForSlider(int threshold, void *userData);
 
-class CircleDetector
+class CircleFinder
 {
 public:
-	CircleDetector();
-	~CircleDetector();
-	void static findAndShowCircles(Mat &img);
+	CircleFinder();
+	~CircleFinder();
+	void static findAndShowCircles(Mat &img, Mat &crop);
 };
-
