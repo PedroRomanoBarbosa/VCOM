@@ -8,18 +8,15 @@
 #include <algorithm> 
 using namespace std;
 using namespace cv;
-
 #define VK_ESCAPE 27
 #define VK_SPACE 32
 
-
-void CallbackForSlider(int threshold, void *userData);
-
-class CircleDetector
+class LineFinder
 {
 public:
-	CircleDetector();
-	~CircleDetector();
-	void static findAndShowCircles(Mat &img);
+	LineFinder();
+	~LineFinder();
+	void static findPointersAndAngles(Mat &crop, Mat &point, vector<float> &angles);
+	void static sayTime(vector<float> angles);
 };
 
