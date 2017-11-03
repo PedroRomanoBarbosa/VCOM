@@ -4,6 +4,11 @@ Time::Time()
 {
 	hour = 0; minute = 0; second = 0;
 }
+Time::Time(float h, float m)
+{
+	hour = 0; minute = 0; second = 0;
+	setTime(h, m);
+}
 
 Time::~Time()
 {}
@@ -35,7 +40,7 @@ int Time::resolveAngle(float angle, int timeSteps)
 void Time::setTime(float angle_h, float angle_m)
 {
 	hour = resolveAngle(angle_h, 12);
-	minute = resolveAngle(angle_h, 60);
+	minute = resolveAngle(angle_m, 60);
 	return;
 }
 void Time::setTime(float angle_h, float angle_m, float angle_s)

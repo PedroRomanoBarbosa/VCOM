@@ -13,6 +13,7 @@ private:
 
 public:
 	Time();
+	Time(float h, float m);
 	~Time();
 	void setTime(float angle_h, float angle_m);
 	void setTime(float angle_h, float angle_m, float angle_s);

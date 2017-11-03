@@ -46,10 +46,9 @@ int main(int argc, const char** argv)
 	//Passar esses angulos à função sayTime
 	LineFinder::sayTime(angles);
 
-	/*
-		Time t = Time(angulo_h, angulo_m);
-		cout << "A hora indicada é " << t.sayTime() << endl;
-	*/
+	//Time Class
+	Time t = Time(); t.setTime(angles[0], angles[1]);
+	cout << "The displayed time is " << t.sayTime() << endl;
 
 	waitKey(0);
 	return 0;
