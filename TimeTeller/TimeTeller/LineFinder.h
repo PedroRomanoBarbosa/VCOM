@@ -16,6 +16,7 @@ class LineFinder
 public:
 	LineFinder();
 	~LineFinder();
-	void static organizeMe(Mat &crop, Mat &point);
+	void static findPointersAndAngles(Mat &crop, Mat &point, vector<float> &angles);
+	void static sayTime(vector<float> angles);
 };
 

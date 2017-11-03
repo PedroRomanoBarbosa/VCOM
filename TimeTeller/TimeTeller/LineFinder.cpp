@@ -55,7 +55,7 @@ float ReturnAngle(Vec4i line1, Vec4i line2) {
 	return result;
 }
 
-void LineFinder::organizeMe(Mat &crop, Mat &point) {
+void LineFinder::findPointersAndAngles(Mat &crop, Mat &point, vector<float> &angles) {
 	Mat croppedImage;
 	crop.copyTo(croppedImage);
 
@@ -66,12 +66,12 @@ void LineFinder::organizeMe(Mat &crop, Mat &point) {
 	Mat croppedEdges;
 	Canny(croppedGrayscale, croppedEdges, 200, 250, 3);
 
-	Mat copy1;
+	Mat copy;
 	vector<Vec4i> lines;
 	int line_threshold = 50, max_gap = 10;
 	int clockCenter_y = croppedImage.size().height / 2;
 	int clockCenter_x = croppedImage.size().width / 2;
-	bool change1 = true;
+	bool change = true;
 
 	namedWindow("Obtained Lines", CV_WINDOW_NORMAL | CV_WINDOW_KEEPRATIO);
 	int desiredWidth = 640, desiredheight = 480;
@@ -80,13 +80,12 @@ void LineFinder::organizeMe(Mat &crop, Mat &point) {
 
 	cout << "Change threshold values until hours' line is red, minutes green and seconds blue" << endl;
 
-	bool change = true;
 	for (;;) {
-		if (change1) {
-			createTrackbar("Threshhold", "Obtained Lines", &line_threshold, 80, CallbackForSlider, &change1);
-			createTrackbar("Maximum Gap", "Obtained Lines", &max_gap, 15, CallbackForSlider, &change1);
+		if (change) {
+			createTrackbar("Threshhold", "Obtained Lines", &line_threshold, 80, CallbackForSlider, &change);
+			createTrackbar("Maximum Gap", "Obtained Lines", &max_gap, 15, CallbackForSlider, &change);
 
-			croppedImage.copyTo(copy1);
+			croppedImage.copyTo(copy);
 
 			/// Apply the Hough Transform to find the lines
 			HoughLinesP(
@@ -131,22 +130,22 @@ void LineFinder::organizeMe(Mat &crop, Mat &point) {
 			///draw all lines
 
 			if (lines.size() == 2) {
-				line(copy1, Point(lines[0][0], lines[0][1]),
+				line(copy, Point(lines[0][0], lines[0][1]),
 					Point(lines[0][2], lines[0][3]), Scalar(0, 0, 255), 3, 8);
-				line(copy1, Point(lines[1][0], lines[1][1]),
+				line(copy, Point(lines[1][0], lines[1][1]),
 					Point(lines[1][2], lines[1][3]), Scalar(0, 255, 0), 3, 8);
 			}
 			else if (lines.size() == 3) {
-				line(copy1, Point(lines[0][0], lines[0][1]),
+				line(copy, Point(lines[0][0], lines[0][1]),
 					Point(lines[0][2], lines[0][3]), Scalar(0, 0, 255), 3, 8);
-				line(copy1, Point(lines[1][0], lines[1][1]),
+				line(copy, Point(lines[1][0], lines[1][1]),
 					Point(lines[1][2], lines[1][3]), Scalar(0, 255, 0), 3, 8);
-				line(copy1, Point(lines[2][0], lines[2][1]),
+				line(copy, Point(lines[2][0], lines[2][1]),
 					Point(lines[2][2], lines[2][3]), Scalar(255, 0, 0), 3, 8);
 			}
 			else {
 				for (int i = 0; i < lines.size(); i++) {
-					line(copy1, Point(lines[i][0], lines[i][1]),
+					line(copy, Point(lines[i][0], lines[i][1]),
 						Point(lines[i][2], lines[i][3]), Scalar(0, 0, 255), 3, 8);
 				}
 			}
@@ -155,7 +154,7 @@ void LineFinder::organizeMe(Mat &crop, Mat &point) {
 		}
 
 		/// Show your results
-		imshow("Obtained Lines", copy1);
+		imshow("Obtained Lines", copy);
 
 		if (cvWaitKey(10) == VK_SPACE) {
 			if (lines.size() == 2 || lines.size() == 3)
@@ -168,7 +167,11 @@ void LineFinder::organizeMe(Mat &crop, Mat &point) {
 	destroyWindow("Obtained Lines");
 
 
-	vector<float> angles;
+	//guardar imagem dos pointeiros na matriz point
+	copy.copyTo(point);
+
+
+
 	// Finds the angles of the lines with vertical
 	for (size_t i = 0; i < lines.size(); i++) {
 		Vec4i l = lines[i];
@@ -189,21 +192,22 @@ void LineFinder::organizeMe(Mat &crop, Mat &point) {
 		angles.push_back(degreeAngle);
 	}
 
+	return;
+}
 
-
+void LineFinder::sayTime(vector<float> angles) {
 	///Calculate time
 	int horas, minutos, segundos;
-	if (lines.size() == 2) {
+	if (angles.size() == 2) {
 		//horas
 		horas = angles[0] / (360 / 12);
 		//minutos
 		minutos = angles[1] / (360 / 60);
 
-		cout << "hours in red and minutes in green." << endl;
-		cout << "time: " << horas << "h " << minutos << "m " << endl << endl;
+		std::cout << "time: " << horas << "h " << minutos << "m " << std::endl << std::endl;
 
 	}
-	else if (lines.size() == 3) {
+	else if (angles.size() == 3) {
 
 		//horas
 		horas = angles[0] / (360 / 12);
@@ -212,18 +216,7 @@ void LineFinder::organizeMe(Mat &crop, Mat &point) {
 		//segundos
 		segundos = angles[2] / (360 / 60);
 
-		cout << "hours in red, minutes in green and seconds in blue." << endl;
-		cout << "time: " << horas << "h " << minutos << "m " << segundos << "s " << endl << endl;
-
+		std::cout << "time: " << horas << "h " << minutos << "m " << segundos << "s " << std::endl << std::endl;
 	}
-
-
-
-
-	namedWindow("Hough Circle Result", CV_WINDOW_AUTOSIZE);
-	imshow("Hough Circle Result", copy1); //Deve mostrar img depois de cropped, não copy.
-
-	return;
-
 
 }
