@@ -18,7 +18,7 @@ int main(int argc, const char** argv)
 		img = ImageRetrieve::getImage(argv[1]);
 	} else {
 		ImageRetrieve::input_choice(img);
-	}
+	} 
 	cout << "Image Loaded.\n";
 	// resultado
 	namedWindow("Original Image", 1);
@@ -47,7 +47,8 @@ int main(int argc, const char** argv)
 	LineFinder::sayTime(angles);
 
 	//Time Class
-	Time t = Time(); t.setTime(angles[0], angles[1]);
+	Time t = Time(); 
+	t.setTime(angles);
 	cout << "The displayed time is " << t.sayTime() << endl;
 
 	waitKey(0);

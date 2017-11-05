@@ -9,6 +9,11 @@ Time::Time(float h, float m)
 	hour = 0; minute = 0; second = 0;
 	setTime(h, m);
 }
+Time::Time(float h, float m, float s)
+{
+	hour = 0; minute = 0; second = 0;
+	setTime(h, m, s);
+}
 
 Time::~Time()
 {}
@@ -39,14 +44,32 @@ int Time::resolveAngle(float angle, int timeSteps)
 
 void Time::setTime(float angle_h, float angle_m)
 {
-	hour = resolveAngle(angle_h, 12);
 	minute = resolveAngle(angle_m, 60);
+	if (minute <= 15) 
+		hour = resolveAngle(angle_h + 12, 12);
+	else if (minute >= 45) 
+		hour = resolveAngle(angle_h - 12, 12);
+	else
+		hour = resolveAngle(angle_h, 12);
 	return;
 }
 void Time::setTime(float angle_h, float angle_m, float angle_s)
 {
 	setTime(angle_h, angle_m);
 	second = resolveAngle(angle_s, 60);
+	return;
+}
+
+void Time::setTime(std::vector<float> angles) 
+{
+	switch (angles.size()) {
+	case 2:
+		setTime(angles[0], angles[1]);
+		break;
+	case 3:
+		setTime(angles[0], angles[1], angles[2]);
+		break;
+	}
 	return;
 }
 

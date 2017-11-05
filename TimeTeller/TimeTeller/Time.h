@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include <string>
 #include <cmath>
 #include <iomanip>
@@ -14,9 +15,11 @@ private:
 public:
 	Time();
 	Time(float h, float m);
+	Time(float h, float m, float s);
 	~Time();
 	void setTime(float angle_h, float angle_m);
 	void setTime(float angle_h, float angle_m, float angle_s);
+	void setTime(std::vector<float> angles);
 	std::string sayTime();
 
 	int getHour();
