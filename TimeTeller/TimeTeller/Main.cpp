@@ -41,7 +41,7 @@ int main(int argc, const char** argv)
 
 	cout << "\nAngle for hours: " << angles[0] << endl;
 	cout << "Angle for minutes: " << angles[1] << endl;
-	if(angles.size() == 3) cout << "\nAngle for seconds: " << angles[2] << endl;
+	if(angles.size() == 3) cout << "Angle for seconds: " << angles[2] << endl;
 
 	//Passar esses angulos à função sayTime
 	LineFinder::sayTime(angles);
