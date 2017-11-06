@@ -45,10 +45,10 @@ int Time::resolveAngle(float angle, int timeSteps)
 void Time::setTime(float angle_h, float angle_m)
 {
 	minute = resolveAngle(angle_m, 60);
-	if (minute <= 15) 
-		hour = resolveAngle(angle_h + 12, 12);
-	else if (minute >= 45) 
-		hour = resolveAngle(angle_h - 12, 12);
+	if (minute <= 10) 
+		hour = resolveAngle(angle_h + 9, 12);
+	else if (minute >= 50) 
+		hour = resolveAngle(angle_h - 9, 12);
 	else
 		hour = resolveAngle(angle_h, 12);
 	return;
